@@ -1,0 +1,363 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Project : Explore birthrates in the USA between 2000 and 2014\n",
+    "\n",
+    "## 1. Introduction to the dataset\n",
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "['year,month,date_of_month,day_of_week,births', '2000,1,1,6,9083', '2000,1,2,7,8006', '2000,1,3,1,11363', '2000,1,4,2,13032', '2000,1,5,3,12558', '2000,1,6,4,12466', '2000,1,7,5,12516', '2000,1,8,6,8934', '2000,1,9,7,7949']\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Preview of the first 10 lines of the \"US_births_2000-2014.csv\" file.\n",
+    "data = open(\"US_births_2000-2014.csv\", \"r\", encoding=\"utf-8\").read()\n",
+    "\n",
+    "births_split = data.split(\"\\n\")\n",
+    "\n",
+    "print(births_split[:10])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[[2000, 1, 1, 6, 9083], [2000, 1, 2, 7, 8006], [2000, 1, 3, 1, 11363], [2000, 1, 4, 2, 13032], [2000, 1, 5, 3, 12558], [2000, 1, 6, 4, 12466], [2000, 1, 7, 5, 12516], [2000, 1, 8, 6, 8934], [2000, 1, 9, 7, 7949], [2000, 1, 10, 1, 11668]]\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Create a function read_csv() that returns a list of each lines converted into lists of type int.\n",
+    "# Result assigned to the list \"us_births_list\"\n",
+    "\n",
+    "def read_csv(file):\n",
+    "    f = open(file, \"r\", encoding=\"utf-8\")\n",
+    "    string_list = f.read()\n",
+    "    string_list = string_list.split('\\n')\n",
+    "    string_list = string_list[1:]\n",
+    "    \n",
+    "    final_list = []\n",
+    "    \n",
+    "    for item in string_list:\n",
+    "        int_fields = []\n",
+    "        int_data = item.split(\",\") #get year, month, date of month, day of the week, amount of births\n",
+    "    \n",
+    "        for item in int_data:\n",
+    "            int_fields.append(int(item))\n",
+    "        final_list.append(int_fields)\n",
+    "\n",
+    "    return (final_list)\n",
+    "\n",
+    "us_births_list = read_csv(\"US_births_2000-2014.csv\")\n",
+    "\n",
+    "print (us_births_list[:10])\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 2. Calculate the amount of births for each month\n",
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "{1: 5063505, 2: 4713079, 3: 5160289, 4: 4952362, 5: 5183824, 6: 5149997, 7: 5441042, 8: 5526814, 9: 5386447, 10: 5294412, 11: 4995823, 12: 5181887}\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Create a function month_births() that returns a dictionary that contains amount of births for each month.\n",
+    "# Result assigned to the dictionary \"us_months_births\"\n",
+    "\n",
+    "# REMINDER:\n",
+    "# each_line[1] = month\n",
+    "# each_line[4] = amount of births\n",
+    "\n",
+    "def month_births(us_births_list):\n",
+    "    us_months_births = {}\n",
+    "\n",
+    "    \n",
+    "    for each_line in us_births_list:\n",
+    "        if each_line[1] in us_months_births:\n",
+    "            nb_births = int(each_line[4]) \n",
+    "            us_months_births[each_line[1]] += nb_births\n",
+    "        else: \n",
+    "            us_months_births[each_line[1]] = 0\n",
+    "    return us_months_births\n",
+    "\n",
+    "month_births_list = month_births(us_births_list)\n",
+    "\n",
+    "print (month_births_list)\n",
+    "    "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 3. Calculate the amount of births for each day of the week\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "{6: 6704495, 7: 5886889, 1: 9316001, 2: 10274874, 3: 10109130, 4: 10045436, 5: 9850199}\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Create a function month_births() that returns a dictionary that contains amount of births for each month.\n",
+    "# Result assigned to the dictionary \"days_of_week\"\n",
+    "\n",
+    "# REMINDER:\n",
+    "# each_line[3] = day in the week\n",
+    "# each_line[4] = amount of births\n",
+    "\n",
+    "def day_births(list):\n",
+    "    days_of_week = {}\n",
+    "    \n",
+    "    for each_line in list:\n",
+    "        day = each_line[3]\n",
+    "        birth = each_line[4]\n",
+    "        \n",
+    "        if day in days_of_week:\n",
+    "            days_of_week[day] += birth\n",
+    "        else: \n",
+    "            days_of_week[day] = birth\n",
+    "        \n",
+    "    return (days_of_week)\n",
+    "\n",
+    "us_days_births = day_births(us_births_list)\n",
+    "print (us_days_births)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 4. Global functions\n",
+    "\n",
+    "* Filter on any column with _calc_count()_\n",
+    "> Accordingly to the column-number entered **(ie 0 = year, 1 = month, 2 = date in the month, 3 = day in the week)**, the function returns the corresponding amount of births.<br>Result assigned to the dictionary _total_births{}_\n",
+    ">> Example: calc_counts(us_births_list, 2) will return the amount of birth for each day of the month\n",
+    "\n",
+    "* Get the max value"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "# REMINDER:\n",
+    "# each_line[0] = year\n",
+    "# each_line[1] = month\n",
+    "# each_line[2] = date in the month\n",
+    "# each_line[3] = day in the week\n",
+    "# each_line[4] = amount of births\n",
+    "\n",
+    "def nbs_nocharset(str):\n",
+    "    str.replace(\"\\xa0\", \" \")\n",
+    "    return (str)\n",
+    "\n",
+    "def calc_counts(list, column):\n",
+    "\n",
+    "    total_births = {}  \n",
+    "    \n",
+    "    for elem in list:\n",
+    "        data_in_column = elem[column]\n",
+    "        births = elem[4]\n",
+    "        if data_in_column in total_births:\n",
+    "            total_births[data_in_column] += births\n",
+    "        else:\n",
+    "            total_births[data_in_column] = births\n",
+    "    max_amount = max(total_births.items(), key = lambda x: x[1])        \n",
+    "    result = (\"Total births : \",  total_births, \"Max : \",  max_amount)\n",
+    "    return nbs_nocharset(result)\n",
+    "\n",
+    "#Get the max\n",
+    "#def maximal_amount(dictionary):\n",
+    " #   max_amount = max(dictionary.items(), key = lambda x: x[1])\n",
+    " \n",
+    "    #return (max_amount)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Result per YEAR"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "AttributeError",
+     "evalue": "'tuple' object has no attribute 'replace'",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[1;31mAttributeError\u001b[0m                            Traceback (most recent call last)",
+      "\u001b[1;32m<ipython-input-28-8b10f28f82ba>\u001b[0m in \u001b[0;36m<module>\u001b[1;34m\u001b[0m\n\u001b[1;32m----> 1\u001b[1;33m \u001b[0mus_year_births\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mcalc_counts\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mus_births_list\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;36m0\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m      2\u001b[0m \u001b[1;31m#max_us_year_births = maximal_amount(us_year_births)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m      3\u001b[0m \u001b[0mprint\u001b[0m \u001b[1;33m(\u001b[0m\u001b[0mus_year_births\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m      4\u001b[0m \u001b[1;31m#print (max_us_year_births)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
+      "\u001b[1;32m<ipython-input-27-12ab490645bf>\u001b[0m in \u001b[0;36mcalc_counts\u001b[1;34m(list, column)\u001b[0m\n\u001b[0;32m     23\u001b[0m     \u001b[0mmax_amount\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mmax\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mtotal_births\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mitems\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mkey\u001b[0m \u001b[1;33m=\u001b[0m \u001b[1;32mlambda\u001b[0m \u001b[0mx\u001b[0m\u001b[1;33m:\u001b[0m \u001b[0mx\u001b[0m\u001b[1;33m[\u001b[0m\u001b[1;36m1\u001b[0m\u001b[1;33m]\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m     24\u001b[0m     \u001b[0mresult\u001b[0m \u001b[1;33m=\u001b[0m \u001b[1;33m(\u001b[0m\u001b[1;34m\"Total births : \"\u001b[0m\u001b[1;33m,\u001b[0m  \u001b[0mtotal_births\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;34m\"Max : \"\u001b[0m\u001b[1;33m,\u001b[0m  \u001b[0mmax_amount\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m---> 25\u001b[1;33m     \u001b[1;32mreturn\u001b[0m \u001b[0mnbs_nocharset\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mresult\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m     26\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m     27\u001b[0m \u001b[1;31m#Get the max\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
+      "\u001b[1;32m<ipython-input-27-12ab490645bf>\u001b[0m in \u001b[0;36mnbs_nocharset\u001b[1;34m(str)\u001b[0m\n\u001b[0;32m      7\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m      8\u001b[0m \u001b[1;32mdef\u001b[0m \u001b[0mnbs_nocharset\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mstr\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m:\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m----> 9\u001b[1;33m     \u001b[0mstr\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mreplace\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;34m\"\\xa0\"\u001b[0m\u001b[1;33m,\u001b[0m \u001b[1;34m\" \"\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m     10\u001b[0m     \u001b[1;32mreturn\u001b[0m \u001b[1;33m(\u001b[0m\u001b[0mstr\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m     11\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n",
+      "\u001b[1;31mAttributeError\u001b[0m: 'tuple' object has no attribute 'replace'"
+     ]
+    }
+   ],
+   "source": [
+    "us_year_births = calc_counts(us_births_list, 0)\n",
+    "#max_us_year_births = maximal_amount(us_year_births)\n",
+    "print (us_year_births)\n",
+    "#print (max_us_year_births)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "us_year_births = calc_counts(us_births_list, 0)\n",
+    "print (us_year_births)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Result per MONTH"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "us_month_births = calc_counts(us_births_list, 1)\n",
+    "print (us_month_births)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Result per DATE OF THE MONTH"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "us_day_month_births = calc_counts(us_births_list, 2)\n",
+    "print (us_day_month_births)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Result per DAY OF THE WEEK"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "us_day_week_births = calc_counts(us_births_list, 3)\n",
+    "print (us_day_week_births)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Calculate the maximal amount of birth per category"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def maximal_amount(dictionary):\n",
+    "    max_amount = max(dictionary.items(), key = lambda x: x[1])\n",
+    " \n",
+    "    return (max_amount)\n",
+    "  \n",
+    "\n",
+    "toprate_month = maximal_amount(us_month_births)\n",
+    "print (toprate_month)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
